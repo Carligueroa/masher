@@ -1,8 +1,8 @@
 #' A donut plot
 #'
-#' @param .data a `table_monovar`
+#' @param .tabyl a `table_monovar`
 #' @param .annotate Should the name of the var be displayed at the center of the donut?
-plot_donut <- function(.data, .annotate = FALSE) {
+plot_donut <- function(.tabyl, .annotate = FALSE) {
 
   if (.annotate) {
     w <- 0.5
@@ -12,13 +12,13 @@ plot_donut <- function(.data, .annotate = FALSE) {
     base <- 1.5
   }
 
-  plot <- ggplot2::ggplot(.data, ggplot2::aes(x = "", y = n, fill = .data[, 1]))+
+  plot <- ggplot2::ggplot(.tabyl, ggplot2::aes(x = "", y = n, fill = .tabyl[, 1]))+
     ggplot2::geom_col(width = w)+
     ggplot2::geom_text(ggplot2::aes(label = percent),
                        position = ggplot2::position_stack(vjust = .5))+
     ggplot2::annotate("text",
-                      x = base, y = sum(.data$n)*0.6,
-                      label = paste("Base: ", sum(.data$n)),
+                      x = base, y = sum(.tabyl$n)*0.6,
+                      label = paste("Base: ", sum(.tabyl$n)),
                       color = "grey50")+
     ggplot2::scale_y_discrete(expand = c(0, 0))+
     ggplot2::coord_polar(theta = "y")
@@ -27,7 +27,7 @@ plot_donut <- function(.data, .annotate = FALSE) {
     plot <- plot +
       ggplot2::annotate(
         "text", x = 0, y = 0,
-        label = names(.data)[1],
+        label = names(.tabyl)[1],
         color = "dark green",
         fontface = "bold",
         size = 9
