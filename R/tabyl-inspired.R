@@ -4,14 +4,19 @@
 #' @param .var The variable to count
 #' @param show_na Should the NAs be shown?
 #' @return A `tabyl` well formatted
-table_monovar <- function(.data, .var, show_na = FALSE) {
-  .var <- rlang::enquo(.var)
+table_monovar <- function(.data, .var = NULL, show_na = FALSE) {
+
+  if (is.atomic(.data)) {
+    .data <- janitor::tabyl(.data, show_na = show_na)
+  } else {
+    .var <- rlang::enquo(.var)
+    .data <- janitor::tabyl(.data, !!.var, show_na = show_na)
+  }
 
   .data %<>%
-    janitor::tabyl(!!.var, show_na = show_na) %>%
     janitor::adorn_pct_formatting()
 
-  if (any(dplyr::pull(.data, !!.var) == "Otros")) {
+  if (any(.data[,1] %in% c("Otros", "Other"))) {
     .data %<>%
       dplyr::mutate(to_arrange = ifelse(!!.var == "Otros", -n, n)) %>%
       dplyr::arrange(dplyr::desc(to_arrange)) %>%
